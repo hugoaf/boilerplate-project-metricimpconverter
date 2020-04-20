@@ -20,11 +20,29 @@ module.exports = function (app) {
       var input = req.query.input;
       var initNum = convertHandler.getNum(input);
       var initUnit = convertHandler.getUnit(input);
+      if(initUnit==="Invalid" && !isNaN(initNum)) {
+        res.json({error: "invalid unit", string : "Error - " + input});
+      }
+      else if(initUnit!=="Invalid" && isNaN(initNum)){
+        res.json({error: "invalid number", string : "Error - " + input});
+      }
+      else if(initUnit==="Invalid" && isNaN(initNum)){
+        res.json({error: "invalid number and unit", string :"Error - " + input});
+      } else {
+
+      var initSpellout = convertHandler.spellOutUnit(initUnit);
       var returnNum = convertHandler.convert(initNum, initUnit);
       var returnUnit = convertHandler.getReturnUnit(initUnit);
-      var toString = convertHandler.getString(initNum, initUnit, returnNum, returnUnit);
+      var returnSpellout = convertHandler.spellOutUnit(returnUnit);
+      var toString = convertHandler.getString(initNum, initSpellout, returnNum, returnSpellout);
       
-      //res.json
+      res.json({
+        initNum, initUnit, returnNum, returnUnit, string: toString
+      })
+
+      }
+
+ 
     });
     
 };
