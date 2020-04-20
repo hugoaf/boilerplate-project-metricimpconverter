@@ -4,12 +4,16 @@ var express     = require('express');
 var bodyParser  = require('body-parser');
 var expect      = require('chai').expect;
 var cors        = require('cors');
-
+var helmet      = require('helmet');
 var apiRoutes         = require('./routes/api.js');
 var fccTestingRoutes  = require('./routes/fcctesting.js');
 var runner            = require('./test-runner');
 
 var app = express();
+
+
+app.use(helmet.noSniff()); // Hide MIME Type
+app.use(helmet.xssFilter()); // prevent cross-site scripting (XSS) attacks
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -23,6 +27,7 @@ app.route('/')
   .get(function (req, res) {
     res.sendFile(process.cwd() + '/views/index.html');
   });
+
 
 //For FCC testing purposes
 fccTestingRoutes(app);
